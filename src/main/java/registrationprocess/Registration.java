@@ -23,7 +23,7 @@ import org.testng.annotations.AfterClass;
 
 
 public class Registration {
-	
+
 	static WebDriver driver;
 
 	@BeforeClass
@@ -35,6 +35,9 @@ public class Registration {
 		driver.get("http://automationpractice.com/index.php");
 
 	}
+
+	/* Create Account Registration Page */
+	
 	public  void  Userregistration(String emailId) {
 		driver.findElement(By.xpath("//header/div[2]/div[1]/div[1]/nav/div[1]/a")).click();
 		driver.manage().timeouts().implicitlyWait(2,TimeUnit.SECONDS );
@@ -42,6 +45,7 @@ public class Registration {
 		driver.findElement(By.xpath("//*[@id=\"SubmitCreate\"]/span")).click();
 	}
 
+	/* Personal Information Details Registration Page */
 	
 	public void fillUserResgistrationPage(String emailId,String firstName,String lastName,String pwd, String dob_date,String dob_month,String dob_year,
 			String add_firstNamw,String add_lastName, String company,String add_address1, String add_address2, String city,String state, String postCode,
@@ -77,10 +81,9 @@ public class Registration {
 		driver.findElement(By.xpath("//input[@id='phone_mobile']")).sendKeys(mobileNumber);
 		driver.findElement(By.xpath("//input[@id='alias']")).sendKeys(aliies);
 		driver.findElement(By.xpath("//button[@id='submitAccount']")).click();
-		
-
 	}
-	
+
+	/* Verify User Registration Process */
 	@Test
 	public void tc_001() {
 		fillUserResgistrationPage("abgc1@getnada.com","sayesha","dhal","watson","25","August ","2001","sayesha","watson","wipro","1stcrossmunnakolala","marathalli",
@@ -106,7 +109,8 @@ public class Registration {
 		WebElement firstNameErrorMsg=driver.findElement(By.xpath("(//li[contains(text(),' is required.')]/b)[2]"));
 		Assert.assertTrue(firstNameErrorMsg.isDisplayed());
 	}
-	
+
+	/* Verify entering incorrect values in fields */
 	@Test
 	public void tc_004() {
 		fillUserResgistrationPage("abas1@getnada.com","1sht57","0xhgf","watson","25","August ","2001","sayesha","watson","wipro","1stcrossmunnakolala","marathalli",
@@ -119,35 +123,81 @@ public class Registration {
 		Assert.assertTrue(firstNameErrorMsg.isDisplayed());
 		Assert.assertTrue(phoneNumberErrorMsg.isDisplayed());	
 	}
-	
-	@Test
-	public void Womenlink(){
-		Actions act= new Actions(driver);
-		driver.manage().timeouts().implicitlyWait(20,TimeUnit.SECONDS);
-		WebElement w= driver.findElement(By.xpath("//div[@id=\"block_top_menu\"]/ul/li[1]/a"));
-		act.moveToElement(w).click().build().perform();
-        driver.findElement(By.xpath("//div[@id=\"block_top_menu\"]/ul/li[1]/ul[1]/li[2]/ul/li[3]/a")).click();	
-        driver.manage().timeouts().implicitlyWait(20,TimeUnit.SECONDS);
-        List<WebElement>element =  driver.findElements(By.xpath("//body/div[@id='page']/div[2]/div[1]/div[3]/div[2]/ul[1]/li[3]/div[1]/div[2]/h5[1]/a"));
-//        List<String> ls= new ArrayList<String>();
-//        ls.add("element");
-//        
-//        System.out.println("text produce:" +ls);
-    System.out.println("last product:" + element.size());
-    for (int i = 0; i < element.size(); i++) {
-    	System.out.println("text product:" + element.get(i).getSize());
-    	
-    }
-	}
-    	 
-    	 
-     //}
-    
-		
-	
-		
 
-	
+	/* Verify the search Product functionality */
+	@Test
+	public void tc_005(){
+		Actions act= new Actions(driver);
+		WebElement womenTab= driver.findElement(By.xpath("//div[@id='block_top_menu']/ul/li[1]/a"));
+		act.moveToElement(womenTab).build().perform();
+		WebElement summerDresses=driver.findElement(By.xpath("(//a[@title='Summer Dresses'])[1]"));
+		act.moveToElement(summerDresses).click().build().perform();
+		WebElement lastproduct =  driver.findElement(By.xpath("//li/div/div/h5/a[@title='Printed Chiffon Dress']"));
+		String lastproductName=lastproduct.getText();
+		WebElement searchBox=driver.findElement(By.id("search_query_top"));
+		searchBox.sendKeys(lastproductName);
+		WebElement searchButton=driver.findElement(By.xpath("//button[@name='submit_search']"));
+		searchButton.click();
+		driver.manage().timeouts().implicitlyWait(2, TimeUnit.SECONDS);
+		WebElement searchResult =  driver.findElement(By.xpath("//li/div/div/h5/a[@title='Printed Chiffon Dress']"));
+		Assert.assertTrue(searchResult.isDisplayed());
+	}
+
+	/* Verify add and Buy Product */
+	@Test
+	public void tc_006() {
+		fillUserResgistrationPage("abgc12098@getnada.com","sayesha","dhal","watson","25","August ","2001","sayesha","watson","wipro","1stcrossmunnakolala","marathalli",
+				"Bangalore","Indiana","00000","United States","register address","252001","943745200","Indian");
+		Actions act= new Actions(driver);
+		driver.manage().timeouts().implicitlyWait(2,TimeUnit.SECONDS);
+		WebElement women= driver.findElement(By.xpath("//div[@id=\"block_top_menu\"]/ul/li[1]/a"));
+		act.moveToElement(women).build().perform();
+		WebElement dresses=driver.findElement(By.xpath("(//a[@title='Dresses'])[1]"));
+		act.click().build().perform();
+		WebElement lastproduct=	driver.findElement(By.xpath("//div/div/h5[1]/a[@title='Printed Chiffon Dress']"));
+		System.out.println(lastproduct.getText());
+		WebElement controlImagePage=driver.findElement(By.xpath("//div/div/div/ul[1]/li[5]/div[@class='product-container']"));
+		act.moveToElement(controlImagePage).build().perform();
+		driver.manage().timeouts().implicitlyWait(3, TimeUnit.SECONDS);
+		WebElement moreButton=driver.findElement(By.xpath("(//a[@title='View'])[5]/span"));
+		act.moveToElement(moreButton).click().build().perform();
+		WebElement plusIcon= driver.findElement(By.xpath("//p[@id='quantity_wanted_p']/a[2]/span"));
+		for (int i = 1; i < 2; i++) {
+			plusIcon.click();
+			Select sizeL= new Select(driver.findElement(By.id("group_1")));
+			sizeL.selectByVisibleText("L");
+			driver.findElement(By.id("color_to_pick_list")).click();
+			driver.findElement(By.id("add_to_cart")).click();
+			driver.findElement(By.xpath("//a[@title='Proceed to checkout']")).click();
+			driver.findElement(By.xpath("(//a[@title='Proceed to checkout'])[2]")).click();
+			driver.findElement(By.name("processAddress")).click();
+			driver.findElement(By.name("processCarrier")).click();
+			driver.findElement(By.xpath("//a[@title='Close']")).click();
+			driver.findElement(By.id("cgv")).click();
+			driver.findElement(By.name("processCarrier")).click();
+			driver.findElement(By.xpath("//a[@title='Pay by check.']")).click();
+			driver.findElement(By.xpath("(//button[@type='submit'])[2]")).click();
+		}
+	}
+
+	/* Verify that 'Add to Wishlist' only works after login */
+	@Test
+	public void tc_007() {
+		Actions act= new Actions(driver);
+		driver.manage().timeouts().implicitlyWait(2,TimeUnit.SECONDS);
+		WebElement women= driver.findElement(By.xpath("//div[@id=\"block_top_menu\"]/ul/li[1]/a"));
+		act.moveToElement(women).build().perform();
+		WebElement dresses=driver.findElement(By.xpath("(//a[@title='Dresses'])[1]"));
+		act.click().build().perform();
+		driver.findElement(By.xpath("//li/div/div/div[1]/a[@title='Printed Dress']")).click();
+		driver.manage().timeouts().implicitlyWait(2,TimeUnit.SECONDS);
+		WebElement click=driver.findElement(By.id("wishlist_button"));
+		act.doubleClick().build().perform();
+		WebElement errorMsgWishlist=driver.findElement(By.xpath("//p[contains(text(),'You must be logged in to manage your wishlist.')]"));
+		Assert.assertTrue(errorMsgWishlist.isDisplayed());
+
+	}
+
 	@AfterClass
 	public void closeBrowser() {
 		driver.quit();
